@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import psycopg2
 import datetime
 import unicodedata
 from config import CONFIG
@@ -8,30 +7,22 @@ from config import CONFIG
 code_site_dole = '34863104'
 abrege_site_dole = '39D'
 
-class Ypareo:
+class Ypareo(object):
     """
     Classe permettant la connexion et la recuperation
     du planning du serveur Ypareo.
     """
 
-    database = {
-        'database' : 'donneesypareo',
-        'user' : 'ypareo',
-        'password' : 'ypareo',
-        'host' : 'srv-iris-sn',
-        'port' : 5432,
-    }
-
     def __init__(self):
         self.m_connexion = None
         self.m_cursor = 0
-        self.compteurMail = 0
-
+        
 
     def connexion(self):
         """Methode permettant de se connecter au serveur Ypareo, retourne True si etablie et False en cas d'erreur"""
         
         try:
+            import psycopg2
             self.m_connexion = psycopg2.connect(**CONFIG['ypareo-db'])
             self.m_cursor = self.m_connexion.cursor()
         except Exception, e:
