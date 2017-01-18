@@ -15,11 +15,10 @@ class Ypareo(object):
     Classe permettant la connexion et la recuperation
     du planning du serveur Ypareo.
     """
-
     def __init__(self):
         self.m_connexion = None
-        self.m_cursor = 0
-        
+        self.m_cursor = None
+
 
     def connexion(self):
         """Methode permettant de se connecter au serveur Ypareo, retourne True si etablie et False en cas d'erreur"""

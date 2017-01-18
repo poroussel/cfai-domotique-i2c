@@ -39,6 +39,8 @@ def serve():
         except KeyboardInterrupt:
             logging.info('Interruption clavier')
             loop = False
+
+    ypareo.deconnexion()
     logging.info('Fermeture du serveur')
     
 if __name__ == "__main__":
