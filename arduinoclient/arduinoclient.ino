@@ -1,7 +1,5 @@
 #include <Wire.h>
 
-int sensorPin = A0;    // select the input pin for the potentiometer
-int ledPin = 13;      // select the pin for the LED
 int buzzerPin = 9;
 
 byte sensorValue = 0; 

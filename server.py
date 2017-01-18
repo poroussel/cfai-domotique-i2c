@@ -29,6 +29,8 @@ if __name__ == "__main__":
         serve()
     elif '--beep' in sys.argv:
         BusI2C().cmd('beep')
+    elif '--cmd' in sys.argv:
+        BusI2C().cmd(sys.argv[sys.argv.index('--cmd') + 1])
     elif '--read' in sys.argv:
         val = BusI2C().read(sys.argv[sys.argv.index('--read') + 1])
         print 'Valeur lue : ', val
