@@ -9,8 +9,6 @@ from i2c import BusI2C
 
 def serve():
     bus = BusI2C()
-    print bus.read('capteur')
-    
     ypareo = Ypareo()
 
     if ypareo.connexion():
