@@ -37,6 +37,10 @@ CONFIG = {
             "i2c-addr": 4,
             "cmd": 9,
         },
+        'reset': {
+            "i2c-addr": 4,
+            "cmd": 1,
+        },
     },
 }
 

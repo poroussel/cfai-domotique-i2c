@@ -14,6 +14,12 @@ void setup()
   Wire.onReceive(receiveEvent); // register event
   Wire.onRequest(requestEvent);
   Serial.begin(9600);           // start serial for output
+  Serial.println("Started...");
+}
+
+void softReset()
+{
+  asm volatile (" jmp 0");
 }
 
 void beep(unsigned char delayms)
@@ -75,6 +81,10 @@ void receiveEvent(int howMany)
       Serial.println(args[0]);
       break;
       
+    case 1: 
+      softReset();
+      break;
+
     default:
       Serial.println("Unknown command");
   }
