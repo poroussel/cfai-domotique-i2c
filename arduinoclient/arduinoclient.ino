@@ -4,7 +4,7 @@ int sensorPin = A0;    // select the input pin for the potentiometer
 int ledPin = 13;      // select the pin for the LED
 int buzzerPin = 9;
 
-int sensorValue = 0; 
+byte sensorValue = 0; 
 /* Durée du beep en ms */
 int dms = 0;
 
@@ -38,7 +38,7 @@ void loop()
 
 void receiveEvent(int howMany)
 {
-  unsigned char cmd;
+  unsigned char cmd = 0;
   unsigned char args[10];
   int nargs = howMany - 1;
   
@@ -49,22 +49,36 @@ void receiveEvent(int howMany)
       args[i-1] = Wire.read();
     }
   }
-  Serial.print("CMD : ");
-  Serial.println(cmd);
+  Serial.print("Received command ");
+  Serial.print(cmd);
+  Serial.print(" and ");
+  Serial.print(nargs);
+  Serial.println(" parameter(s)");
+  
   switch (cmd) {
     case 9: // Beep
       dms = args[0];
       break;
       
     case 8: // Stockage d'une valeur pour lecture
-      if (nargs > 0)
-        sensorValue = analogRead(args[0]);    
-      else
-        sensorValue = analogRead(sensorPin);    
+      // Les convertisseurs sont en 10 bits (0-1023) mais
+      // pour simplifier la transmission on passe en 8 bits 
+      sensorValue = analogRead(args[0]) >> 2;    
+      Serial.print("Read ");
+      Serial.print(sensorValue);
+      Serial.print(" on pin ");
+      Serial.println(args[0]);
+      break;
+      
+    case 7: // Ecriture d'une valeur
+      Serial.print("Write ");
+      Serial.print(args[1]);
+      Serial.print(" on pin ");
+      Serial.println(args[0]);
       break;
       
     default:
-      Serial.println("Commande inconnue");
+      Serial.println("Unknown command");
   }
 }
 
@@ -74,8 +88,6 @@ void receiveEvent(int howMany)
  */
 void requestEvent()
 {
-  Serial.println("request");
-  Serial.println(sensorValue);
   Wire.write(sensorValue);
 }
 

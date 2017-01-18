@@ -32,5 +32,8 @@ if __name__ == "__main__":
     elif '--read' in sys.argv:
         val = BusI2C().read(sys.argv[sys.argv.index('--read') + 1])
         print 'Valeur lue : ', val
+    elif '--write' in sys.argv:
+        idx = sys.argv.index('--write')
+        BusI2C().write(sys.argv[idx + 1], sys.argv[idx + 2])
     else:
         print 'Erreur de parametre'
