@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import select
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 from config import CONFIG
 from creation_BDD import create_bdd
@@ -11,21 +15,39 @@ def serve():
     bus = BusI2C()
     ypareo = Ypareo()
 
-    if ypareo.connexion():
-        planning = ypareo.interroPlanning()
-        print planning
-    else:
-        print 'Erreur connexion ypareo'
+    if not ypareo.connexion():
+        logging.error('Erreur connexion ypareo')
 
+    loop = True    
+    inl = [sys.stdin]
 
+    logging.info('Lancement du serveur...')
+    while loop:
+        try:
+            readable, _, _ = select.select(inl, [], [], CONFIG['frequence'])
 
+            # Sortie par timeout
+            if not readable:
+                try:
+                    planning = ypareo.interroPlanning()
+                except:
+                    logging.exception('Lecture planning')
+            else:
+                for h in readable:
+                    if h == sys.stdin:
+                        line = sys.stdin.readline()
+                    
+        except KeyboardInterrupt:
+            logging.info('Interruption clavier')
+            loop = False
+    logging.info('Fermeture du serveur')
+    
 if __name__ == "__main__":
     if '--build' in sys.argv:
         print 'Creation de la base de données locale...'
         create_bdd()
         print '...terminé'
     elif '--run' in sys.argv:
-        print 'Lancement du serveur'
         serve()
     elif '--beep' in sys.argv:
         BusI2C().cmd('beep')

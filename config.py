@@ -12,6 +12,8 @@ CONFIG = {
         "port": 5432,
     },
 
+    "frequence": 3.5,
+    
     "i2c-bus": 1,
 
     
