@@ -3,7 +3,6 @@
 import sys
 import select
 import logging
-
 logging.basicConfig(level=logging.INFO)
 
 from config import CONFIG

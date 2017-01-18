@@ -2,6 +2,9 @@
 
 import datetime
 import unicodedata
+import logging
+logging.basicConfig(level=logging.INFO)
+
 from config import CONFIG
 
 code_site_dole = '34863104'
@@ -25,8 +28,8 @@ class Ypareo(object):
             import psycopg2
             self.m_connexion = psycopg2.connect(**CONFIG['ypareo-db'])
             self.m_cursor = self.m_connexion.cursor()
-        except Exception, e:
-            print e
+        except:
+            logging.exception('Connexion postgres')
             return False
         return True
 
