@@ -9,7 +9,6 @@ from i2c import BusI2C
 
 def serve():
     bus = BusI2C()
-    # bus.cmd('beep')
     print bus.read('capteur')
     
     ypareo = Ypareo()
@@ -30,5 +29,10 @@ if __name__ == "__main__":
     elif '--run' in sys.argv:
         print 'Lancement du serveur'
         serve()
+    elif '--beep' in sys.argv:
+        BusI2C().cmd('beep')
+    elif '--read' in sys.argv:
+        val = BusI2C().read(sys.argv[sys.argv.index('--read') + 1])
+        print 'Valeur lue : ', val
     else:
         print 'Erreur de parametre'

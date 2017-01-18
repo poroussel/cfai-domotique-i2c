@@ -5,6 +5,7 @@ int ledPin = 13;      // select the pin for the LED
 int buzzerPin = 9;
 
 int sensorValue = 0; 
+/* Durée du beep en ms */
 int dms = 0;
 
 void setup()
@@ -15,7 +16,6 @@ void setup()
   Wire.onReceive(receiveEvent); // register event
   Wire.onRequest(requestEvent);
   Serial.begin(9600);           // start serial for output
-  beep(150);
 }
 
 void beep(unsigned char delayms)
@@ -29,6 +29,7 @@ void beep(unsigned char delayms)
 void loop()
 {
   delay(50);
+  
   if (dms > 0) {
     beep(dms);
     dms = 0;
