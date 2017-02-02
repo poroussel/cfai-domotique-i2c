@@ -3,6 +3,9 @@
 import smbus
 import time
 
+from logging import getLogger
+logger = getLogger(__name__)
+
 from config import CONFIG
     
 """
@@ -31,6 +34,7 @@ class BusI2C(object):
             self.bus.write_byte_data(addr, numc, 150)
         
     def write(self, hw, value):
+        logger.debug('write {} {}'.format(hw, value))
         hw = CONFIG['hardware'].get(hw, None)
         if hw is None:
             return
@@ -40,6 +44,7 @@ class BusI2C(object):
 
 
     def read(self, hw):
+        logger.debug('read {}'.format(hw))
         hw = CONFIG['hardware'].get(hw, None)
         if hw is None:
             return

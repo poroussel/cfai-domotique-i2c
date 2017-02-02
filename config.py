@@ -12,6 +12,8 @@ CONFIG = {
         "port": 5432,
     },
 
+    "loglevel": 'DEBUG',
+    
     "frequence": 3.5,
     
     "i2c-bus": 1,

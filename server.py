@@ -2,10 +2,12 @@
 
 import sys
 import select
+import argparse
 import logging
-logging.basicConfig(level=logging.INFO)
-
 from config import CONFIG
+
+logging.basicConfig(level=eval('logging.{}'.format(CONFIG['loglevel'])))
+
 from creation_BDD import create_bdd
 from Ypareo import Ypareo
 from i2c import BusI2C
@@ -42,23 +44,33 @@ def serve():
 
     ypareo.deconnexion()
     logging.info('Fermeture du serveur')
-    
+
+
 if __name__ == "__main__":
-    if '--build' in sys.argv:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-r', '--run', action='store_true', default=False, help=u"Lancement serveur")
+    parser.add_argument('-b', '--beep', action='store_true', default=False, help=u"Génération d'un bip")
+    parser.add_argument('-c', '--create', action='store_true', default=False, help=u"Initialisation de la base locale")
+    parser.add_argument('-e', '--execute', default=None, help=u"Exécution d'une commande")
+    parser.add_argument('-rv', '--read', metavar='capteur', default=None, help=u"Lecture d'un capteur")
+    parser.add_argument('-wv', '--write', metavar=('actionneur', 'valeur'), default=None, help=u"Écriture d'une valeur", nargs=2)
+    
+    env = parser.parse_args(sys.argv[1:])
+
+    if env.create:
         print 'Creation de la base de données locale...'
         create_bdd()
         print '...terminé'
-    elif '--run' in sys.argv:
+    elif env.run:
         serve()
-    elif '--beep' in sys.argv:
+    elif env.beep:
         BusI2C().cmd('beep')
-    elif '--cmd' in sys.argv:
-        BusI2C().cmd(sys.argv[sys.argv.index('--cmd') + 1])
-    elif '--read' in sys.argv:
-        val = BusI2C().read(sys.argv[sys.argv.index('--read') + 1])
-        print 'Valeur lue : ', val
-    elif '--write' in sys.argv:
-        idx = sys.argv.index('--write')
-        BusI2C().write(sys.argv[idx + 1], sys.argv[idx + 2])
+    elif env.execute:
+        BusI2C().cmd(env.execute)
+    elif env.read:
+        val = BusI2C().read(env.read)
+        print 'Valeur lue pour {} : {}'.format(env.read, val)
+    elif env.write:
+        BusI2C().write(env.write[0], env.write[1])
     else:
         print 'Erreur de parametre'
