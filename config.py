@@ -12,7 +12,7 @@ CONFIG = {
         "port": 5432,
     },
 
-    "loglevel": 'DEBUG',
+    "loglevel": 'INFO',
     
     "frequence": 3.5,
     
@@ -33,6 +33,13 @@ CONFIG = {
             "type": "float",
             "i2c-addr": 4,
             "pin": 0,
+        },
+        "pre": {
+            "label": "Capteur mouvement",
+            "action": "read",
+            "type": "float",
+            "i2c-addr": 4,
+            "pin": 1,
         },
     },
 
