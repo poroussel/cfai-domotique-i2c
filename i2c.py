@@ -34,13 +34,33 @@ class BusI2C(object):
             self.bus.write_byte_data(addr, numc, 150)
         
     def write(self, hw, value):
+        """
+        Lors de l'utilisation de write_block_data le client reçoit
+          * num cmd
+          * nbre data
+          * data 0
+          * data 1
+          * etc
+        
+        La ligne self.bus.write_block_data(hw['i2c-addr'], 4, [11, 22]) génère donc
+        du côté arduino : 4 / 2 / 11 / 22. On aura donc cmd = 4, args[0] = 2, etc...
+        """
         logger.debug('write {} {}'.format(hw, value))
         hw = CONFIG['hardware'].get(hw, None)
         if hw is None:
             return
         if hw['action'] != 'write':
             return
-        self.bus.write_i2c_block_data(hw['i2c-addr'], 7, [int(hw['pin']), int(value)])
+        if hw['type'] == 'bool':
+            if int(value) == 0:
+                logger.debug('digital addr {} / pin {} / {}'.format(hw['i2c-addr'], int(hw['pin']), 'off'))
+                self.bus.write_block_data(hw['i2c-addr'], 5, [int(hw['pin']), 0])
+            else:
+                logger.debug('digital addr {} / pin {} / {}'.format(hw['i2c-addr'], int(hw['pin']), 'on'))
+                self.bus.write_block_data(hw['i2c-addr'], 5, [int(hw['pin']), 1])
+        else:
+            logger.debug('analog addr {} / pin {} / {}'.format(hw['i2c-addr'], int(hw['pin']), int(value)))
+            self.bus.write_block_data(hw['i2c-addr'], 4, [int(hw['pin']), int(value)])
 
 
     def read(self, hw):
@@ -51,7 +71,7 @@ class BusI2C(object):
         if hw['action'] != 'read':
             return
         self.bus.write_byte_data(hw['i2c-addr'], 8, hw['pin'])
-        time.sleep(0.05)
+        time.sleep(0.10)
         return self.bus.read_byte(hw['i2c-addr'])
 
 

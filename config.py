@@ -20,7 +20,7 @@ CONFIG = {
         "starttls": False,
     },
 
-    "loglevel": 'INFO',
+    "loglevel": 'DEBUG',
     
     "frequence": 5,
     
@@ -33,6 +33,13 @@ CONFIG = {
             "type": "ms",
             "i2c-addr": 4,
             "pin": 9,
+        },
+        "lumiere": {
+            "label": "Eclairage interieur",
+            "action": "write",
+            "type": "bool",
+            "i2c-addr": 4,
+            "pin": 10,
         },
         "capteur": {
             "label": "Potentiomètre",
@@ -53,7 +60,7 @@ CONFIG = {
     "commands": {
         'beep': {
             "i2c-addr": 4,
-            "cmd": 9,
+            "cmd": 2,
         },
         'reset': {
             "i2c-addr": 4,
