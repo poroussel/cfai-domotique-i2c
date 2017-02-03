@@ -55,6 +55,11 @@ void receiveEvent(int howMany)
   int i = 0;
 
   cmd = Wire.read();
+  /*
+   * Attention, si les données ont été envoyées par write_block_data
+   * le premier argument contiendra le nombre de valeurs transmises.
+   * Le premier paramètre réel sera donc dans args[1].
+   */
   while (Wire.available()) {
     args[i] = Wire.read();
     i++;
