@@ -12,12 +12,19 @@ CONFIG = {
         "port": 5432,
     },
 
+    "smtp" : {
+        "host": "",
+        "port": 0,
+        "username": "",
+        "password": "",
+        "starttls": False,
+    },
+
     "loglevel": 'INFO',
     
-    "frequence": 3.5,
+    "frequence": 5,
     
     "i2c-bus": 1,
-
     
     "hardware": {
         "buzzer": {
@@ -28,13 +35,13 @@ CONFIG = {
             "pin": 9,
         },
         "capteur": {
-            "label": "Capteur chelou",
+            "label": "Potentiomètre",
             "action": "read",
             "type": "float",
             "i2c-addr": 4,
             "pin": 0,
         },
-        "pre": {
+        "presence": {
             "label": "Capteur mouvement",
             "action": "read",
             "type": "float",
