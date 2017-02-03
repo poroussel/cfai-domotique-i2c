@@ -14,3 +14,10 @@ https://www.arduino.cc/en/Reference/Wire
 et
 
 http://playground.arduino.cc/Main/WireLibraryDetailedReference
+
+
+Librairie python smbus
+----------------------
+
+Du côté Raspberry la communication i2c est gérée à l'aide de la
+bibliothèque smbus.

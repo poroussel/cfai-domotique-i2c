@@ -6,7 +6,12 @@ import argparse
 import logging
 from config import CONFIG
 
-logging.basicConfig(level=eval('logging.{}'.format(CONFIG['loglevel'])))
+FORMAT = "%(asctime)s %(levelname)s:%(name)s:%(lineno)d : %(message)s"
+
+if CONFIG['logfile']:
+    logging.basicConfig(format=FORMAT, filename=CONFIG['logfile'], level=eval('logging.{}'.format(CONFIG['loglevel'])))
+else:
+    logging.basicConfig(format=FORMAT, level=eval('logging.{}'.format(CONFIG['loglevel'])))
 
 from creation_BDD import create_bdd
 from Ypareo import Ypareo
@@ -25,7 +30,7 @@ def serve():
     logging.info('Lancement du serveur...')
     while loop:
         try:
-            readable, _, _ = select.select(inl, [], [], CONFIG['frequence'])
+            readable, _, _ = select.select(inl, [], [], CONFIG['temporisation'])
 
             # Sortie par timeout
             if not readable:

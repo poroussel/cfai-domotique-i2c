@@ -20,9 +20,10 @@ CONFIG = {
         "starttls": False,
     },
 
-    "loglevel": 'DEBUG',
+    "loglevel": 'INFO',
+    "logfile": None,
     
-    "frequence": 5,
+    "temporisation": 5,
     
     "i2c-bus": 1,
     
