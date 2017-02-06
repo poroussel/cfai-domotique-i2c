@@ -51,17 +51,19 @@ class BusI2C(object):
             return
         if hw['action'] != 'write':
             return
-        if hw['type'] == 'bool':
-            if int(value) == 0:
-                logger.debug('digital addr {} / pin {} / {}'.format(hw['i2c-addr'], int(hw['pin']), 'off'))
-                self.bus.write_block_data(hw['i2c-addr'], 5, [int(hw['pin']), 0])
+        try:
+            if hw['type'] == 'bool':
+                if int(value) == 0:
+                    logger.debug('digital addr {} / pin {} / {}'.format(hw['i2c-addr'], int(hw['pin']), 'off'))
+                    self.bus.write_block_data(hw['i2c-addr'], 5, [int(hw['pin']), 0])
+                else:
+                    logger.debug('digital addr {} / pin {} / {}'.format(hw['i2c-addr'], int(hw['pin']), 'on'))
+                    self.bus.write_block_data(hw['i2c-addr'], 5, [int(hw['pin']), 1])
             else:
-                logger.debug('digital addr {} / pin {} / {}'.format(hw['i2c-addr'], int(hw['pin']), 'on'))
-                self.bus.write_block_data(hw['i2c-addr'], 5, [int(hw['pin']), 1])
-        else:
-            logger.debug('analog addr {} / pin {} / {}'.format(hw['i2c-addr'], int(hw['pin']), int(value)))
-            self.bus.write_block_data(hw['i2c-addr'], 4, [int(hw['pin']), int(value)])
-
+                logger.debug('analog addr {} / pin {} / {}'.format(hw['i2c-addr'], int(hw['pin']), int(value)))
+                self.bus.write_block_data(hw['i2c-addr'], 4, [int(hw['pin']), int(value)])
+        except:
+            logger.exception('error writing {} on {}'.format(value, hw))
 
     def read(self, hw):
         logger.debug('read {}'.format(hw))
@@ -70,9 +72,14 @@ class BusI2C(object):
             return
         if hw['action'] != 'read':
             return
-        self.bus.write_byte_data(hw['i2c-addr'], 8, hw['pin'])
-        time.sleep(0.10)
-        return self.bus.read_byte(hw['i2c-addr'])
+        try:
+            self.bus.write_byte_data(hw['i2c-addr'], 8, hw['pin'])
+            time.sleep(0.10)
+            val = self.bus.read_byte(hw['i2c-addr'])
+        except:
+            logger.exception('error while reading {}'.format(hw))
+            val = -1
+        return val
 
 
 if __name__ == "__main__":
