@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import operator
 
 CONFIG = {
     "sqlite-path": "locale.db",
@@ -18,12 +19,13 @@ CONFIG = {
         "username": "",
         "password": "",
         "starttls": False,
+        "from_addr": "toto@titi.com",
     },
 
     "loglevel": 'INFO',
     "logfile": None,
     
-    "temporisation": 3,
+    "temporisation": 1,
     
     "i2c-bus": 1,
     
@@ -43,22 +45,18 @@ CONFIG = {
             "pin": 10,
         },
         "capteur": {
-            "label": "Potentiomètre",
+            "label": "Luminosité",
             "action": "read",
             "type": "float",
             "i2c-addr": 4,
             "pin": 0,
-        },
-        "presence": {
-            "label": "Capteur mouvement",
-            "action": "read",
-            "type": "float",
-            "i2c-addr": 4,
-            "pin": 1,
-            "action:": {
-                "level": 150,
-                "run": "capture",
-            },
+            "execute": [
+                {
+                    "operation": operator.ge,
+                    "level": 150,
+                    "run": "capture",
+                }
+            ],
         },
     },
 

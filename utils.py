@@ -42,7 +42,7 @@ def dictadd(*dicts):
     return result
 
     
-def sendmail(from_address, to_address, subject, message, headers=None, **kw):
+def sendmail(to_address, subject, message, headers=None, **kw):
     """
     Sends the email message `message` with mail and envelope headers
     for from `from_address_` to `to_address` with `subject`.
@@ -55,7 +55,7 @@ def sendmail(from_address, to_address, subject, message, headers=None, **kw):
     optionally content_type keys.
     """
     attachments = kw.pop("attachments", [])
-    mail = _EmailMessage(from_address, to_address, subject, message, headers, **kw)
+    mail = _EmailMessage(CONFIG['smtp']['from_addr'], to_address, subject, message, headers, **kw)
 
     for a in attachments:
         if isinstance(a, dict):

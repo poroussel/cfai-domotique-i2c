@@ -32,8 +32,18 @@ class Server(object):
 
     def handle_input(self):
         for cpt in self.inputs:
+            conf = CONFIG['hardware'][cpt]
             val = self.bus.read(cpt)
+            if val < 0:
+                continue
+            
             print 'Lecture {} : {}'.format(cpt, val)
+            for act in conf.get('execute', []):
+                op = act['operation']
+                level = act['level']
+                run = act['run']
+                print act
+                
             time.sleep(0.1)
         
     def run(self):
