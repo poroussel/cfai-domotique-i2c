@@ -3,6 +3,7 @@
 int buzzerPin = 9;
 
 byte sensorValue = 0; 
+
 /* Durée du beep en ms */
 int dms = 0;
 
@@ -110,6 +111,8 @@ void receiveEvent(int howMany)
  */
 void requestEvent()
 {
+  Serial.print("Sending ");
+  Serial.println(sensorValue);
   Wire.write(sensorValue);
 }
 
