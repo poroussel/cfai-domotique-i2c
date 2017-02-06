@@ -23,7 +23,7 @@ CONFIG = {
     "loglevel": 'INFO',
     "logfile": None,
     
-    "temporisation": 5,
+    "temporisation": 3,
     
     "i2c-bus": 1,
     
@@ -55,6 +55,10 @@ CONFIG = {
             "type": "float",
             "i2c-addr": 4,
             "pin": 1,
+            "action:": {
+                "level": 150,
+                "run": "capture",
+            },
         },
     },
 
