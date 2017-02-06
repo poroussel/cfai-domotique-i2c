@@ -32,7 +32,7 @@ class VideoCapture(object):
             t = threading.Thread(target=worker, args=(self.camera, filename, self.lock))
             t.start()
         else:
-            logger.error('Camera already in recording')
+            logger.debug('Camera already in recording')
     
 if __name__ == "__main__":
     vc = VideoCapture()

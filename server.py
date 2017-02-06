@@ -48,17 +48,27 @@ class Server(object):
                 op = act.get('operation', None)
                 level = act.get('level', None)
                 run = act.get('run', None)
+                hardware = act.get('hardware', None)
+                value = act.get('value', None)
 
                 # Si la tâche n'est pas correctement configurée on passe à la suivante
                 if not op or not level or not run:
-                    logger.error('Configuration action incomplete')
+                    logging.error('Configuration action incomplète')
                     continue
 
                 # Si la condition de déclenchement est valide on lance la routine
                 if op(val, level):
                     logging.debug(' --> exécution de {}'.format(run))
-                    self.camera.capture()
-                
+                    if run == 'capture':
+                        self.camera.capture()
+                    elif run == 'write':
+                        if not hardware or not value:
+                            logging.error('Action écriture incomplète')
+                        else:
+                            self.bus.write(hardware, value)
+                    else:
+                        logging.error('Tâche {} inconnue'.format(run))
+                        
             time.sleep(0.1)
         
     def run(self):

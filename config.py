@@ -27,7 +27,7 @@ CONFIG = {
 
     "capture": True,
     
-    "temporisation": 1,
+    "temporisation": 2,
     
     "i2c-bus": 1,
     
@@ -47,7 +47,7 @@ CONFIG = {
             "pin": 10,
         },
         "capteur": {
-            "label": "Luminosité",
+            "label": "Mouvement",
             "action": "read",
             "type": "float",
             "i2c-addr": 4,
@@ -57,7 +57,14 @@ CONFIG = {
                     "operation": operator.ge,
                     "level": 150,
                     "run": "capture",
-                }
+                },
+                {
+                    "operation": operator.ge,
+                    "level": 150,
+                    "run": "write",
+                    "hardware": "lumiere",
+                    "value": 1,
+                },
             ],
         },
     },
