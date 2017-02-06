@@ -27,7 +27,7 @@ class VideoCapture(object):
         if self.lock.acquire(False):
             now = dt.datetime.now()
             timestamp = now.strftime("%s")
-            filename = 'capture-{}.mjpeg'.format(timestamp)
+            filename = 'videos/capture-{}.mjpeg'.format(timestamp)
             logger.info('Start recording to {}'.format(filename))
             t = threading.Thread(target=worker, args=(self.camera, filename, self.lock))
             t.start()
