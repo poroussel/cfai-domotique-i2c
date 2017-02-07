@@ -22,20 +22,22 @@ CONFIG = {
         "from_addr": "toto@titi.com",
     },
 
+    "to_addr": "btssnfc@gmail.com",
+
     "loglevel": 'INFO',
     "logfile": None,
 
     "capture": True,
-    
+
     "temporisation": 2,
-    
+
     "i2c-bus": 1,
-    
+
     "hardware": {
         "buzzer": {
             "label": "Buzzer de fou",
             "action": "write",
-            "type": "ms",
+            "type": "float",
             "i2c-addr": 4,
             "pin": 9,
         },
@@ -80,4 +82,3 @@ CONFIG = {
         },
     },
 }
-
