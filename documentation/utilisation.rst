@@ -134,6 +134,10 @@ Autres
 Exemples de commandes
 =====================
 
+Affichage de l'aide ::
+
+  python server.py -h
+
 Lecture à intervalle régulier (0.1s) d'un capteur ::
 
   watch -d -n 0 python server.py -rv capteur
