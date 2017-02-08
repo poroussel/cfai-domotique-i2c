@@ -88,3 +88,20 @@ Exemples de commandes
 Lecture à intervalle régulier (0.1s) d'un capteur ::
 
   watch -d -n 0 python server.py -rv capteur
+
+Liste des périphériques définis dans le fichier de configuration ::
+
+  python server.py --list
+
+Affichage de la valeur retournée par un capteur ::
+
+  python server.py --read capteur
+
+Envoi d'une valeur à un actionneur ::
+
+  python server.py --write lumiere 1
+
+Lancement du serveur ::
+
+  python server.py --run
+
