@@ -49,23 +49,25 @@ CONFIG = {
             "pin": 10,
         },
         "capteur": {
-            "label": "Mouvement",
+            "label": "Luminosité",
             "action": "read",
             "type": "float",
             "i2c-addr": 4,
             "pin": 0,
             "execute": [
                 {
-                    "operation": operator.ge,
-                    "level": 150,
-                    "run": "capture",
-                },
-                {
-                    "operation": operator.ge,
-                    "level": 150,
+                    "operation": operator.le,
+                    "level": 120,
                     "run": "write",
                     "hardware": "lumiere",
                     "value": 1,
+                },
+                {
+                    "operation": operator.ge,
+                    "level": 121,
+                    "run": "write",
+                    "hardware": "lumiere",
+                    "value": 0,
                 },
             ],
         },

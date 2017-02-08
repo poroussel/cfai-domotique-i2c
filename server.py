@@ -43,7 +43,7 @@ class Server(object):
             if val < 0:
                 continue
             
-            print 'Lecture {} : {}'.format(cpt, val)
+            logging.info('Lecture {} : {}'.format(cpt, val))
             for act in conf.get('execute', []):
                 op = act.get('operation', None)
                 level = act.get('level', None)
@@ -52,7 +52,7 @@ class Server(object):
                 value = act.get('value', None)
 
                 # Si la tâche n'est pas correctement configurée on passe à la suivante
-                if not op or not level or not run:
+                if op is None or level is None or run is None:
                     logging.error('Configuration action incomplète')
                     continue
 
@@ -62,9 +62,10 @@ class Server(object):
                     if run == 'capture':
                         self.camera.capture()
                     elif run == 'write':
-                        if not hardware or not value:
+                        if hardware is None or value is None:
                             logging.error('Action écriture incomplète')
                         else:
+                            logging.info('Envoi de {} sur {}'.format(value, hardware))
                             self.bus.write(hardware, value)
                     else:
                         logging.error('Tâche {} inconnue'.format(run))
