@@ -14,12 +14,12 @@ CONFIG = {
     },
 
     "smtp" : {
-        "host": "",
-        "port": 0,
-        "username": "",
-        "password": "",
-        "starttls": False,
-        "from_addr": "toto@titi.com",
+        "host": "smtp.gmail.com",
+        "port": 587,
+        "username": "btssnfc@gmail.com",
+        "password": "mpdmdqjnspsi",
+        "starttls": True,
+        "from_addr": "btssnfc@gmail.com",
     },
 
     "to_addr": "btssnfc@gmail.com",
@@ -61,6 +61,13 @@ CONFIG = {
                     "run": "write",
                     "hardware": "lumiere",
                     "value": 1,
+                },
+                {
+                    "operation": operator.le,
+                    "level": 120,
+                    "run": "email",
+                    "subject": "Presence non planifiee",
+                    "body": "Attention, un changement a ete detecte dans la salle",
                 },
                 {
                     "operation": operator.ge,

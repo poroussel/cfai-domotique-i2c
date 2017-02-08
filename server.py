@@ -8,6 +8,7 @@ import time
 
 from config import CONFIG
 from camera import VideoCapture
+from utils import sendmail
 
 FORMAT = "%(asctime)s %(levelname)s:%(name)s:%(lineno)d : %(message)s"
 
@@ -48,8 +49,6 @@ class Server(object):
                 op = act.get('operation', None)
                 level = act.get('level', None)
                 run = act.get('run', None)
-                hardware = act.get('hardware', None)
-                value = act.get('value', None)
 
                 # Si la tâche n'est pas correctement configurée on passe à la suivante
                 if op is None or level is None or run is None:
@@ -62,11 +61,19 @@ class Server(object):
                     if run == 'capture':
                         self.camera.capture()
                     elif run == 'write':
+                        hardware = act.get('hardware', None)
+                        value = act.get('value', None)
                         if hardware is None or value is None:
                             logging.error('Action écriture incomplète')
                         else:
                             logging.info('Envoi de {} sur {}'.format(value, hardware))
                             self.bus.write(hardware, value)
+                    elif run == 'email':
+                        logging.info('Envoi email')
+                        try:
+                            sendmail(CONFIG['to_addr'], act.get('subject', 'Empty'), act.get('body', 'Empty'))
+                        except:
+                            logging.exception('Erreur envoi email')
                     else:
                         logging.error('Tâche {} inconnue'.format(run))
                         
