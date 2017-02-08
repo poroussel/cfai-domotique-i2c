@@ -43,9 +43,9 @@ température la configuration pourrait être :
 	  "type": "float",
 	  "i2c-addr": 4,
 	  "pin": 0,
+	  "execute": []
       },
   }
-
 
 Chaque périphérique doit porter au minimum les informations suivantes :
 
@@ -55,6 +55,55 @@ Chaque périphérique doit porter au minimum les informations suivantes :
 * `i2c-addr` : adresse du contrôleur arduino sur le bus i2c
 * `pin` : numéro du pin que lequel est connecté le périphérique
 
+À chaque capteur peut être associé une liste de tâches à effectuer si une condition est vérifiée. La
+liste est définie sous la clé `execute`, chaque élément de la liste étant un dictionnaire comportant au
+minimum 3 clés :
+
+* `operation` : la fonction déterminant si la tâche doit être exécutée
+* `level` : la valeur envoyée en paramètre à la fonction en plus de la valeur retournée par le capteur
+* `run` : la tâche à exécuter (`capture`, `write`, `email`)
+
+Signification des tâches :
+
+* `capture` : enregistrement d'une séquence vidéo   
+* `write` : envoi d'un valeur sur un périphérique (`hardware` et `value` en clés supplémentaires)
+* `email` : envoi d'un email (`subject` et `body` en clés supplémentaires)
+
+Par exemple, avec la configuration ci-dessous, l'actionneur `lumiere` sera passé à 1, et donc la
+lumière allumée, dès que le capteur `temp` retourne une valeur inférieure ou égale à 120.
+
+.. code:: python
+
+  "hardware": {
+      "lumiere": {
+          "label": "Eclairage interieur",
+          "action": "write",
+          "type": "bool",
+          "i2c-addr": 4,
+          "pin": 10,
+      },
+      "temp": {
+          "label": "Température cuisine",
+	  "action": "read",
+	  "type": "float",
+	  "i2c-addr": 4,
+	  "pin": 0,
+	  "execute": [
+                {
+                    "operation": operator.le,
+                    "level": 120,
+                    "run": "write",
+                    "hardware": "lumiere",
+                    "value": 1,
+                },
+	  ]
+      },
+  }
+
+`operator.le` correspond à la fonction `le` (Less or Equal) définie dans le module standard `operator`. Cette fonction
+attend en paramètre 2 valeurs et retourne `True` si et seulement si la premiere valeur est inférieure ou égale à la
+seconde. Ce module propose d'autres opérateurs de comparaison utilisables dans le fichier de configuration. Il doit
+être importé dans le fichier de configuration.
 
 Email
 -----
