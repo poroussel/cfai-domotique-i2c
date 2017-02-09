@@ -19,10 +19,8 @@ class Ypareo(object):
         self.m_connexion = None
         self.m_cursor = None
 
-
     def connexion(self):
         """Methode permettant de se connecter au serveur Ypareo, retourne True si etablie et False en cas d'erreur"""
-
         try:
             import psycopg2
             self.m_connexion = psycopg2.connect(**CONFIG['ypareo-db'])
@@ -34,8 +32,8 @@ class Ypareo(object):
 
     def deconnexion(self):
         """Methode permettant de se deconnecter du serveur Ypareo"""
-
-        self.m_connexion.close()
+        if self.m_connexion:
+            self.m_connexion.close()
 
 
     def interroPlanning(self):

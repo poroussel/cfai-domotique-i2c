@@ -5,6 +5,9 @@ Utilisation du serveur domotique
 Installation
 ============
 
+Les fichiers du serveur domotique sont installés sur le Raspberry dans le répertoire
+`/home/pi/domotique/`.
+
 Configuration
 =============
 

@@ -25,15 +25,18 @@ class Server(object):
     def __init__(self):
         self.bus = BusI2C()
         self.ypareo = Ypareo()
-
+        
         if CONFIG.get('capture', False):
             self.camera = VideoCapture()
         else:
             self.camera = None
 
-        if not self.ypareo.connexion():
+        if self.ypareo.connexion():
+            logging.info('Connexion BDD ok')
+        else:
             logging.error('Erreur connexion ypareo')
 
+        logging.info('Initialisation terminée...')
         # Liste des capteurs que l'on doit lire
         self.inputs = [name for name, conf in CONFIG['hardware'].iteritems() if conf['action'] == 'read']
 
@@ -99,7 +102,7 @@ class Server(object):
                 if not readable:
                     try:
                         planning = self.ypareo.interroPlanning()
-                        occuptation = len(planning) > 0
+                        occupation = len(planning) > 0
                     except:
                         logging.exception('Lecture planning')
                         occupation = False

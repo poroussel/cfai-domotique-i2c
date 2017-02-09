@@ -57,21 +57,14 @@ CONFIG = {
             "execute": [
                 {
                     "operation": operator.le,
-                    "level": 120,
+                    "level": 140,
                     "run": "write",
                     "hardware": "lumiere",
                     "value": 1,
                 },
                 {
-                    "operation": operator.le,
-                    "level": 120,
-                    "run": "email",
-                    "subject": "Presence non planifiee",
-                    "body": "Attention, un changement a ete detecte dans la salle",
-                },
-                {
                     "operation": operator.ge,
-                    "level": 121,
+                    "level": 141,
                     "run": "write",
                     "hardware": "lumiere",
                     "value": 0,
