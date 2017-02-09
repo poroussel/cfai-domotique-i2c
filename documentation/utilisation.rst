@@ -21,7 +21,7 @@ soit un sous-dictionnaire. Voici une liste des différentes clés par catégorie
 Base de données
 ---------------
 
-* `sqlite-path` : nom du fichier pour la base de données locale
+* `sqlite-path` : nom du fichier pour la base de données locale (inutilisé)
 * `ypareo-db` : accès au serveur de base de données Ypareo
 
   - `database` : nom de la base
@@ -114,7 +114,6 @@ seconde. Ce module propose d'autres opérateurs de comparaison utilisables dans 
 Email
 -----
 
-
 * `smtp` : configuration du serveur smtp pour l'envoi d'emails
 
   - `host` : nom du serveur (ex: smtp.free.fr)
@@ -126,6 +125,11 @@ Email
 
 * `to_addr` : adresse email du destinataire
 
+Un compte destiné à recevoir les alertes email a été créé ::
+
+  adresse : btssnfc@gmail.com
+  mot de passe : mpdmdqjnspsi
+
 Autres
 ------
 
@@ -134,7 +138,7 @@ Autres
 * `capture` : utilisation de la camera liée à la Raspberry (True ou False)
 * `loglevel` : niveau d'information dans le log (ERROR, INFO ou DEBUG)
 * `logfile` : nom du fichier log ou None pour utiliser la console
-* `force-occupation` : permet de définir si les locaux sont occupés ou pas quelque soit le contenu de la base de données (True ou False)
+* `force-occupation` : permet de définir si les locaux sont occupés ou pas quelque soit le contenu de la base de données (True, False ou None). Si la clé n'est pas présente ou que la valeur associée est `None` la valeur déterminée depuis la base de planning est utilisée.
 
 
 Exemples de commandes

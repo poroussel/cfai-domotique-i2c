@@ -10,7 +10,7 @@ Le logiciel installé sur les Arduinos est générique, il ne dépend pas des p�
 attachés. Ces périphériques sont simplement décrits dans le fichier de configuration
 de l'application serveur installée sur la Raspberry.
 
-Les pins n° 10, 11, 12 et 13 sont configurés en sorties digitales.
+Les pins n° 10, 11, 12 et 13 des Arduinos sont configurés en sorties digitales.
 
 
 Protocole de communication
@@ -32,6 +32,7 @@ La lecture de la valeur d'un capteur s'effectue donc en 2 temps :
 * envoi de la commande 8 identifiant le n° de pin dont on veut lire la valeur
 * envoi d'une requête de lecture qui retourne la valeur stockée par la commande 8
 
+  
 Communication entre les matériels
 =================================
 
@@ -73,3 +74,5 @@ Utilisation des données du planning
 La base de données `Ypareo` est consultée régulièrement pour déterminer si une occupation des salles
 est prévue dans la journée. Si le nombre de réservation de salle est supérieur à 0 on considère que
 les locaux sont occupés.
+
+Cette base est stockée dans un serveur Postgresql sur la machine `srv-iris-sn`.

@@ -98,8 +98,9 @@ class Server(object):
             try:
                 readable, _, _ = select.select(inl, [], [], CONFIG['temporisation'])
 
-                # Sortie par timeout
+                # Sortie par timeout, on effectue les traitements récurrents
                 if not readable:
+                    # Détermination de l'occupation des locaux
                     try:
                         planning = self.ypareo.interroPlanning()
                         occupation = len(planning) > 0
@@ -107,8 +108,10 @@ class Server(object):
                         logging.exception('Lecture planning')
                         occupation = False
 
-                    if 'force-occupation' in CONFIG:
+                    # La valeur calculée peut être écrasée par une clé du fichier de configuration
+                    if not CONFIG.get('force-occupation', None) is None:
                         occupation = CONFIG['force-occupation']
+                        
                     self.handle_input(occupation)
                 else:
                     for h in readable:
