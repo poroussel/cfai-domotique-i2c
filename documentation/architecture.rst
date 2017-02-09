@@ -65,3 +65,11 @@ Informations sur le bus i2c
 Sur la Raspberry la commande `i2cdetect -l` permet de lister les bus i2c présents sur la machine.
 Une fois le bus identifié il est possible de lister les esclaves présents sur le bus à l'aide
 de la commande `i2cdetect n°bus`.
+
+
+Utilisation des données du planning
+===================================
+
+La base de données `Ypareo` est consultée régulièrement pour déterminer si une occupation des salles
+est prévue dans la journée. Si le nombre de réservation de salle est supérieur à 0 on considère que
+les locaux sont occupés.

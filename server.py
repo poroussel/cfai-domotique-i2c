@@ -30,20 +30,20 @@ class Server(object):
             self.camera = VideoCapture()
         else:
             self.camera = None
-            
+
         if not self.ypareo.connexion():
             logging.error('Erreur connexion ypareo')
 
         # Liste des capteurs que l'on doit lire
         self.inputs = [name for name, conf in CONFIG['hardware'].iteritems() if conf['action'] == 'read']
 
-    def handle_input(self):
+    def handle_input(self, occupation):
         for cpt in self.inputs:
             conf = CONFIG['hardware'][cpt]
             val = self.bus.read(cpt)
             if val < 0:
                 continue
-            
+
             logging.info('Lecture {} : {}'.format(cpt, val))
             for act in conf.get('execute', []):
                 op = act.get('operation', None)
@@ -58,7 +58,7 @@ class Server(object):
                 # Si la condition de déclenchement est valide on lance la routine
                 if op(val, level):
                     logging.debug(' --> exécution de {}'.format(run))
-                    if run == 'capture':
+                    if run == 'capture' and occupation is False:
                         self.camera.capture()
                     elif run == 'write':
                         hardware = act.get('hardware', None)
@@ -73,12 +73,12 @@ class Server(object):
                         try:
                             sendmail(CONFIG['to_addr'], act.get('subject', 'Empty'), act.get('body', 'Empty'))
                         except:
-                            logging.exception('Erreur envoi email')
+                            logging.error('Erreur envoi email')
                     else:
                         logging.error('Tâche {} inconnue'.format(run))
-                        
+
             time.sleep(0.1)
-        
+
     def run(self):
         logging.info('Lancement du serveur...')
         loop = True
@@ -91,21 +91,26 @@ class Server(object):
                 if not readable:
                     try:
                         planning = self.ypareo.interroPlanning()
+                        occuptation = len(planning) > 0
                     except:
                         logging.exception('Lecture planning')
-                    self.handle_input()
+                        occupation = False
+
+                    if 'force-occupation' in CONFIG:
+                        occupation = CONFIG['force-occupation']
+                    self.handle_input(occupation)
                 else:
                     for h in readable:
                         if h == sys.stdin:
                             line = sys.stdin.readline()
-                    
+
             except KeyboardInterrupt:
                 logging.info('Interruption clavier')
                 loop = False
 
         self.ypareo.deconnexion()
         logging.info('Fermeture du serveur')
-        
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -116,7 +121,7 @@ if __name__ == "__main__":
     parser.add_argument('-l', '--list', action='store_true', default=False, help=u"Liste les périphériques définis")
     parser.add_argument('-rv', '--read', metavar='capteur', default=None, help=u"Lecture d'un capteur")
     parser.add_argument('-wv', '--write', metavar=('actionneur', 'valeur'), default=None, help=u"Écriture d'une valeur", nargs=2)
-    
+
     env = parser.parse_args(sys.argv[1:])
 
     if env.create:
@@ -139,4 +144,3 @@ if __name__ == "__main__":
         print
         for name, conf in CONFIG['hardware'].iteritems():
             print ' * {} : {}'.format(name, conf['label'])
-            

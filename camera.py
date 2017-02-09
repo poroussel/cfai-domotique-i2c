@@ -17,7 +17,7 @@ def worker(camera, filename, lock):
         camera.stop_recording()
     finally:
         lock.release()
-    
+
 class VideoCapture(object):
     def __init__(self):
         self.lock = threading.Lock()
@@ -33,7 +33,7 @@ class VideoCapture(object):
             t.start()
         else:
             logger.debug('Camera already in recording')
-    
+
 if __name__ == "__main__":
     vc = VideoCapture()
     vc.capture()

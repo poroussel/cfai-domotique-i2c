@@ -65,7 +65,7 @@ minimum 3 clés :
 
 Signification des tâches :
 
-* `capture` : enregistrement d'une séquence vidéo   
+* `capture` : enregistrement d'une séquence vidéo si les locaux ne sont pas occupés
 * `write` : envoi d'un valeur sur un périphérique (`hardware` et `value` en clés supplémentaires)
 * `email` : envoi d'un email (`subject` et `body` en clés supplémentaires)
 
@@ -128,7 +128,7 @@ Autres
 * `capture` : utilisation de la camera liée à la Raspberry (True ou False)
 * `loglevel` : niveau d'information dans le log (ERROR, INFO ou DEBUG)
 * `logfile` : nom du fichier log ou None pour utiliser la console
-
+* `force-occupation` : permet de définir si les locaux sont occupés ou pas quelque soit le contenu de la base de données (True ou False)
 
 
 Exemples de commandes
@@ -157,4 +157,3 @@ Envoi d'une valeur à un actionneur ::
 Lancement du serveur ::
 
   python server.py --run
-
