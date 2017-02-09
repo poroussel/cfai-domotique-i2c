@@ -63,9 +63,12 @@ minimum 3 clés :
 * `level` : la valeur envoyée en paramètre à la fonction en plus de la valeur retournée par le capteur
 * `run` : la tâche à exécuter (`capture`, `write`, `email`)
 
+Si la clé `occupation` (`True` ou `False`) est présente la tâche sera exécutée uniquement si l'occupation
+des salles calculée à partir du planning est égale à la valeur associée à cette clé.
+
 Signification des tâches :
 
-* `capture` : enregistrement d'une séquence vidéo si les locaux ne sont pas occupés
+* `capture` : enregistrement d'une séquence vidéo
 * `write` : envoi d'un valeur sur un périphérique (`hardware` et `value` en clés supplémentaires)
 * `email` : envoi d'un email (`subject` et `body` en clés supplémentaires)
 
