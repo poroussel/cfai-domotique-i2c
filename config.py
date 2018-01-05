@@ -49,7 +49,7 @@ CONFIG = {
             "pin": 10,
         },
         "capteur": {
-            "label": "Luminosité",
+            "label": "Luminosite",
             "action": "read",
             "type": "float",
             "i2c-addr": 4,
