@@ -36,6 +36,8 @@ class Server(object):
         else:
             logging.error('Erreur connexion ypareo')
 
+        self.commands = CONFIG.get('commands', {}).keys()
+        
         logging.info('Initialisation terminée...')
         # Liste des capteurs que l'on doit lire
         self.inputs = [name for name, conf in CONFIG['hardware'].iteritems() if conf['action'] == 'read']
@@ -85,6 +87,9 @@ class Server(object):
                             sendmail(CONFIG['to_addr'], act.get('subject', 'Empty'), act.get('body', 'Empty'))
                         except:
                             logging.error('Erreur envoi email')
+                    elif run in self.commands:
+                        logging.info('Lancement commande {}'.format(run))
+                        self.bus.cmd(run)
                     else:
                         logging.error('Tâche {} inconnue'.format(run))
 
