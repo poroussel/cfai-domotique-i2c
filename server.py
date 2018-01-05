@@ -145,7 +145,10 @@ def console_server(server):
 def web_server(server):
     logging.info('Lancement du serveur web...')
 
-    
+
+    def callback():
+        server.handle_input(False)
+        
     class MainHandler(tornado.web.RequestHandler):
         def get(self):
             self.write('Yo !')
@@ -166,6 +169,7 @@ def web_server(server):
     ])
     app.listen(8888, '0.0.0.0')
     
+    tornado.ioloop.PeriodicCallback(callback, CONFIG['temporisation'] * 1000).start()
     tornado.ioloop.IOLoop.current().start()
     
 
