@@ -5,6 +5,7 @@ import select
 import argparse
 import logging
 import time
+import json
 
 import tornado.ioloop
 import tornado.web
@@ -44,6 +45,11 @@ class Server(object):
         logging.info('Initialisation terminée...')
         # Liste des capteurs que l'on doit lire
         self.inputs = [name for name, conf in CONFIG['hardware'].iteritems() if conf['action'] == 'read']
+
+    def hardware(self, name=None):
+        if name:
+            return CONFIG['hardware'][name]
+        return CONFIG['hardware'].keys()
 
     def handle_input(self, occupation):
         for cpt in self.inputs:
@@ -135,22 +141,31 @@ def console_server(server):
     logging.info('Fermeture du serveur')
 
 
-
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, world")
-
                                                                         
 def web_server(server):
     logging.info('Lancement du serveur web...')
 
-    def make_app():
-        return tornado.web.Application([
-            (r"/", MainHandler),
-        ])
     
-    app = make_app()
-    app.listen(8888)
+    class MainHandler(tornado.web.RequestHandler):
+        def get(self):
+            self.write('Yo !')
+            
+    class Hardware(tornado.web.RequestHandler):
+        def get(self):
+            self.write(json.dumps(server.hardware(), indent=4))
+            
+    class HardwareByName(tornado.web.RequestHandler):
+        def get(self, name):
+            filtered = {k:v for k, v in server.hardware(name).iteritems() if type(v) in [str, unicode, int, float]}
+            self.write(json.dumps(filtered, indent=4))
+    
+    app = tornado.web.Application([
+        (r"/hardware/([a-z]+)", HardwareByName),
+        (r"/hardware", Hardware),
+        (r"/", MainHandler),
+    ])
+    app.listen(8888, '0.0.0.0')
+    
     tornado.ioloop.IOLoop.current().start()
     
 
