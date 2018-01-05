@@ -63,6 +63,11 @@ CONFIG = {
                     "value": 1,
                 },
                 {
+                    "operation": operator.le,
+                    "level": 140,
+                    "run": "beep",
+                },
+                {
                     "operation": operator.ge,
                     "level": 141,
                     "run": "write",
