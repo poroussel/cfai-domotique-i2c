@@ -6,6 +6,9 @@ import argparse
 import logging
 import time
 
+import tornado.ioloop
+import tornado.web
+
 from config import CONFIG
 from camera import VideoCapture
 from utils import sendmail
@@ -95,45 +98,66 @@ class Server(object):
 
             time.sleep(0.1)
 
-    def run(self):
-        logging.info('Lancement du serveur...')
-        loop = True
-        inl = [sys.stdin]
-        while loop:
-            try:
-                readable, _, _ = select.select(inl, [], [], CONFIG['temporisation'])
+            
+def console_server(server):
+    logging.info('Lancement du serveur...')
+    loop = True
+    inl = [sys.stdin]
+    while loop:
+        try:
+            readable, _, _ = select.select(inl, [], [], CONFIG['temporisation'])
 
-                # Sortie par timeout, on effectue les traitements récurrents
-                if not readable:
-                    # Détermination de l'occupation des locaux
-                    try:
-                        planning = self.ypareo.interroPlanning()
-                        occupation = len(planning) > 0
-                    except:
-                        logging.exception('Lecture planning')
-                        occupation = False
+            # Sortie par timeout, on effectue les traitements récurrents
+            if not readable:
+                # Détermination de l'occupation des locaux
+                try:
+                    planning = server.ypareo.interroPlanning()
+                    occupation = len(planning) > 0
+                except:
+                    logging.exception('Lecture planning')
+                    occupation = False
 
-                    # La valeur calculée peut être écrasée par une clé du fichier de configuration
-                    if not CONFIG.get('force-occupation', None) is None:
-                        occupation = CONFIG['force-occupation']
+                # La valeur calculée peut être écrasée par une clé du fichier de configuration
+                if not CONFIG.get('force-occupation', None) is None:
+                    occupation = CONFIG['force-occupation']
                         
-                    self.handle_input(occupation)
-                else:
-                    for h in readable:
-                        if h == sys.stdin:
-                            line = sys.stdin.readline()
+                server.handle_input(occupation)
+            else:
+                for h in readable:
+                    if h == sys.stdin:
+                        line = sys.stdin.readline()
 
-            except KeyboardInterrupt:
-                logging.info('Interruption clavier')
-                loop = False
+        except KeyboardInterrupt:
+            logging.info('Interruption clavier')
+            loop = False
 
-        self.ypareo.deconnexion()
-        logging.info('Fermeture du serveur')
+    server.ypareo.deconnexion()
+    logging.info('Fermeture du serveur')
 
+
+
+class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write("Hello, world")
+
+                                                                        
+def web_server(server):
+    logging.info('Lancement du serveur web...')
+
+    def make_app():
+        return tornado.web.Application([
+            (r"/", MainHandler),
+        ])
+    
+    app = make_app()
+    app.listen(8888)
+    tornado.ioloop.IOLoop.current().start()
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', '--run', action='store_true', default=False, help=u"Lancement serveur")
+    parser.add_argument('-w', '--web', action='store_true', default=False, help=u"Lancement serveur web")
     parser.add_argument('-b', '--beep', action='store_true', default=False, help=u"Génération d'un bip")
     parser.add_argument('-c', '--create', action='store_true', default=False, help=u"Initialisation de la base locale")
     parser.add_argument('-e', '--execute', default=None, help=u"Exécution d'une commande")
@@ -142,13 +166,15 @@ if __name__ == "__main__":
     parser.add_argument('-wv', '--write', metavar=('actionneur', 'valeur'), default=None, help=u"Écriture d'une valeur", nargs=2)
 
     env = parser.parse_args(sys.argv[1:])
-
+    
     if env.create:
         print 'Creation de la base de données locale...'
         create_bdd()
         print '...terminé'
     elif env.run:
-        Server().run()
+        console_server(Server())
+    elif env.web:
+        web_server(Server())        
     elif env.beep:
         BusI2C().cmd('beep')
     elif env.execute:
