@@ -2,12 +2,13 @@
 
 import smbus
 import time
+from mock import Mock
 
 from logging import getLogger
 logger = getLogger(__name__)
 
 from config import CONFIG
-    
+
 """
 Communication avec l'arduino
 
@@ -24,7 +25,12 @@ le capteur est connecté.
 
 class BusI2C(object):
     def __init__(self):
-        self.bus = smbus.SMBus(CONFIG['i2c-bus'])
+        try:
+            self.bus = smbus.SMBus(CONFIG['i2c-bus'])
+        except IOError:
+            logger.exception(CONFIG['i2c-bus'])
+            logger.info('Mocking up a bus')
+            self.bus = Mock()
 
     def cmd(self, name):
         prm = CONFIG['commands'].get(name, None)
@@ -32,7 +38,7 @@ class BusI2C(object):
             addr = prm['i2c-addr']
             numc = prm['cmd']
             self.bus.write_byte_data(addr, numc, 150)
-        
+
     def write(self, hw, value):
         """
         Lors de l'utilisation de write_block_data le client reçoit
@@ -41,7 +47,7 @@ class BusI2C(object):
           * data 0
           * data 1
           * etc
-        
+
         La ligne self.bus.write_block_data(hw['i2c-addr'], 4, [11, 22]) génère donc
         du côté arduino : 4 / 2 / 11 / 22. On aura donc cmd = 4, args[0] = 2, etc...
         """
@@ -85,4 +91,3 @@ class BusI2C(object):
 if __name__ == "__main__":
     bus = BusI2C()
     bus.cmd('beep')
-    
