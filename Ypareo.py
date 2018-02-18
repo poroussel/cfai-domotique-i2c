@@ -40,6 +40,10 @@ class Ypareo(object):
         """Methode permettant d'extraire le planning des salles du serveur Ypareo
            et de le retourner dans un dictionnaire"""
 
+        if not self.m_connexion:
+            logging.warning('Pas de connexion a la bdd')
+            return []
+
         date = datetime.date.today()
 
         query_salle = """
