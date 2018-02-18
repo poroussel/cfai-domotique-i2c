@@ -27,7 +27,7 @@ CONFIG = {
     "loglevel": 'INFO',
     "logfile": None,
 
-    "capture": True,
+    "capture": False,
 
     "temporisation": 2,
 

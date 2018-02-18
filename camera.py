@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import picamera
 import threading
 import time
 import datetime as dt
@@ -20,6 +19,7 @@ def worker(camera, filename, lock):
 
 class VideoCapture(object):
     def __init__(self):
+        import picamera
         self.lock = threading.Lock()
         self.camera = picamera.PiCamera(resolution=(640, 480), framerate=10)
 
