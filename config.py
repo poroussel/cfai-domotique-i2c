@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import operator
+import capteur
 
 CONFIG = {
     "sqlite-path": "locale.db",
@@ -49,6 +50,7 @@ CONFIG = {
             "pin": 10,
         },
         "capteur": {
+            "class": capteur.CapteurI2C,
             "label": "Luminosite",
             "action": "read",
             "type": "float",
