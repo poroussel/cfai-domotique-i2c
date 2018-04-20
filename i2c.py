@@ -31,6 +31,7 @@ class BusI2C(object):
             logger.exception(CONFIG['i2c-bus'])
             logger.info('Mocking up a bus')
             self.bus = Mock()
+            self.bus.read_byte.return_value = 24
 
     def cmd(self, name):
         prm = CONFIG['commands'].get(name, None)
