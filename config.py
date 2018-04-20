@@ -23,6 +23,8 @@ CONFIG = {
         "from_addr": "btssnfc@gmail.com",
     },
 
+    "collector-url" : "http://127.0.0.1:8000/sensors/api/readings/",
+
     "to_addr": "btssnfc@gmail.com",
 
     "loglevel": 'INFO',
@@ -54,6 +56,7 @@ CONFIG = {
             "label": "Luminosite",
             "action": "read",
             "type": "float",
+            "collector-id" : 1,
             "i2c-addr": 4,
             "pin": 0,
             "execute": [
