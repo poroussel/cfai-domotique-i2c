@@ -28,7 +28,19 @@ Base de données
   - `user` : utilisateur de connexion
   - `password` : mot de passe
   - `host` : nom ou adresse ip de la machine hôte
-  - `port` : port de connexion
+- `port` : port de connexion
+
+
+Stockage des données lues
+-------------------------
+
+Il est possible de paramètrer le programme pour que les valeurs retournées par
+les capteurs soient enregistrées dans une base de données accessible depuis une
+application web. Il suffit de définir l'URL de cette application dans le paramètre
+`collector-url`.
+
+Chaque capteur devant envoyer ses données devra comporter la clé `collector-id`
+avec comme valeur l'id du capteur dans la base de données.
 
 Périphériques
 -------------
