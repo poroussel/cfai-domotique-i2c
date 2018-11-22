@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import smbus
 import time
 from mock import Mock
 
@@ -26,11 +25,13 @@ le capteur est connecté.
 class BusI2C(object):
     def __init__(self):
         try:
+            import smbus
             self.bus = smbus.SMBus(CONFIG['i2c-bus'])
-        except IOError:
+        except (ImportError, IOError):
             logger.exception(CONFIG['i2c-bus'])
             logger.info('Mocking up a bus')
             self.bus = Mock()
+            self.bus.read_byte.return_value = 24
 
     def cmd(self, name):
         prm = CONFIG['commands'].get(name, None)

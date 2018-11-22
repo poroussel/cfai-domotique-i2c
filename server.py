@@ -6,6 +6,7 @@ import argparse
 import logging
 import time
 import json
+import requests
 
 import tornado.ioloop
 import tornado.web
@@ -29,7 +30,9 @@ class Server(object):
     def __init__(self):
         self.bus = BusI2C()
         self.ypareo = Ypareo()
-        
+
+        self.collector_url = CONFIG.get('collector-url', None)
+
         if CONFIG.get('capture', False):
             self.camera = VideoCapture()
         else:
@@ -41,7 +44,7 @@ class Server(object):
             logging.error('Erreur connexion ypareo')
 
         self.commands = CONFIG.get('commands', {}).keys()
-        
+
         logging.info('Initialisation terminée...')
         # Liste des capteurs que l'on doit lire
         self.inputs = {name: conf['class'](name, conf) for name, conf in CONFIG['hardware'].iteritems() if conf['action'] == 'read'}
@@ -61,6 +64,11 @@ class Server(object):
                 continue
 
             logging.info('Lecture {} : {}'.format(cpt, val))
+
+            if self.collector_url and 'collector-id' in conf:
+                logging.debug("Envoi de la valeur vers le collecteur")
+                requests.post(self.collector_url, data={'sensor': conf['collector-id'], 'value': val})
+
             for act in conf.get('execute', []):
                 op = act.get('operation', None)
                 level = act.get('level', None)
@@ -106,7 +114,7 @@ class Server(object):
 
             time.sleep(0.1)
 
-            
+
 def console_server(server):
     logging.info('Lancement du serveur...')
     loop = True
@@ -128,7 +136,7 @@ def console_server(server):
                 # La valeur calculée peut être écrasée par une clé du fichier de configuration
                 if not CONFIG.get('force-occupation', None) is None:
                     occupation = CONFIG['force-occupation']
-                        
+
                 server.handle_input(occupation)
             else:
                 for h in readable:
@@ -143,37 +151,37 @@ def console_server(server):
     logging.info('Fermeture du serveur')
 
 
-                                                                        
+
 def web_server(server):
     logging.info('Lancement du serveur web...')
 
 
     def callback():
         server.handle_input(False)
-        
+
     class MainHandler(tornado.web.RequestHandler):
         def get(self):
             self.write('Yo !')
-            
+
     class Hardware(tornado.web.RequestHandler):
         def get(self):
             self.write(json.dumps(server.hardware(), indent=4))
-            
+
     class HardwareByName(tornado.web.RequestHandler):
         def get(self, name):
             filtered = {k:v for k, v in server.hardware(name).iteritems() if type(v) in [str, unicode, int, float]}
             self.write(json.dumps(filtered, indent=4))
-    
+
     app = tornado.web.Application([
         (r"/hardware/([a-z]+)", HardwareByName),
         (r"/hardware", Hardware),
         (r"/", MainHandler),
     ])
     app.listen(8888, '0.0.0.0')
-    
+
     tornado.ioloop.PeriodicCallback(callback, CONFIG['temporisation'] * 1000).start()
     tornado.ioloop.IOLoop.current().start()
-    
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -187,7 +195,7 @@ if __name__ == "__main__":
     parser.add_argument('-wv', '--write', metavar=('actionneur', 'valeur'), default=None, help=u"Écriture d'une valeur", nargs=2)
 
     env = parser.parse_args(sys.argv[1:])
-    
+
     if env.create:
         print 'Creation de la base de données locale...'
         create_bdd()
@@ -195,7 +203,7 @@ if __name__ == "__main__":
     elif env.run:
         console_server(Server())
     elif env.web:
-        web_server(Server())        
+        web_server(Server())
     elif env.beep:
         BusI2C().cmd('beep')
     elif env.execute:
