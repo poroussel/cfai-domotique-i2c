@@ -44,17 +44,19 @@ class Server(object):
         
         logging.info('Initialisation terminée...')
         # Liste des capteurs que l'on doit lire
-        self.inputs = [name for name, conf in CONFIG['hardware'].iteritems() if conf['action'] == 'read']
-
+        self.inputs = {name: conf['class'](name, conf) for name, conf in CONFIG['hardware'].iteritems() if conf['action'] == 'read'}
+        
     def hardware(self, name=None):
         if name:
             return CONFIG['hardware'][name]
         return CONFIG['hardware'].keys()
 
     def handle_input(self, occupation):
-        for cpt in self.inputs:
+        for cpt, obj in self.inputs.iteritems():
             conf = CONFIG['hardware'][cpt]
-            val = self.bus.read(cpt)
+            
+            
+            val = obj.read(self)
             if val < 0:
                 continue
 

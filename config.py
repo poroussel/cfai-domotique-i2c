@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import operator
+import capteur
 
 CONFIG = {
     "sqlite-path": "locale.db",
@@ -29,7 +30,7 @@ CONFIG = {
 
     "capture": False,
 
-    "temporisation": 2,
+    "temporisation": 0.5,
 
     "i2c-bus": 1,
 
@@ -48,33 +49,54 @@ CONFIG = {
             "i2c-addr": 4,
             "pin": 10,
         },
+        "rfid": {
+            "class": capteur.CapteurModBUS,
+            "label": "Lecteur carte",
+            "action": "read",
+            "type": "float",
+            "tcp": "192.168.104.200",
+            "port": 502,
+            "slave": 5,
+            "execute": [
+               {
+                  "operation": operator.eq,
+                  "level": 1,
+                  "run": "write",
+                  "hardware": "lumiere",
+                  "value": 1,
+               },
+               {
+                  "operation": operator.eq,
+                  "level": 0,
+                  "run": "write",
+                  "hardware": "lumiere",
+                  "value": 0,
+               }
+            ]
+        },
         "capteur": {
+            "class": capteur.CapteurI2C,
             "label": "Luminosite",
             "action": "read",
             "type": "float",
             "i2c-addr": 4,
             "pin": 0,
             "execute": [
-                {
-                    "operation": operator.le,
-                    "level": 140,
-                    "run": "write",
-                    "hardware": "lumiere",
-                    "value": 1,
-                },
-                {
-                    "operation": operator.le,
-                    "level": 140,
-                    "run": "beep",
-                },
-                {
-                    "operation": operator.ge,
-                    "level": 141,
-                    "run": "write",
-                    "hardware": "lumiere",
-                    "value": 0,
-                },
-            ],
+               {
+                  "operation": operator.ge,
+                  "level": 150,
+                  "run": "write",
+                  "hardware": "lumiere",
+                  "value": 0,
+               },
+               {
+                  "operation": operator.le,
+                  "level": 149,
+                  "run": "write",
+                  "hardware": "lumiere",
+                  "value": 1,
+               }
+            ]
         },
     },
 
