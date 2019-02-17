@@ -48,7 +48,7 @@ class Server(object):
         logging.info('Initialisation terminée...')
         # Liste des capteurs que l'on doit lire
         self.inputs = {name: conf['class'](name, conf) for name, conf in CONFIG['hardware'].iteritems() if conf['action'] == 'read'}
-        
+
     def hardware(self, name=None):
         if name:
             return CONFIG['hardware'][name]
@@ -57,10 +57,10 @@ class Server(object):
     def handle_input(self, occupation):
         for cpt, obj in self.inputs.iteritems():
             conf = CONFIG['hardware'][cpt]
-            
-            
+
+
             val = obj.read(self)
-            if val < 0:
+            if val is None:
                 continue
 
             logging.info('Lecture {} : {}'.format(cpt, val))
