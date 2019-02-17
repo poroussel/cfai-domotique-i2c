@@ -30,6 +30,8 @@ class History(object):
         if self.m_connexion:
             self.m_connexion.close()
 
+    def write(self, name, value):
+        pass
 
 
 if __name__ == '__main__':

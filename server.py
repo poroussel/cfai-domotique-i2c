@@ -73,6 +73,9 @@ class Server(object):
 
             logging.info('Lecture {} : {}'.format(cpt, val))
 
+            if self.history and conf.get('history', False):
+                self.history.write(cpt, str(val))
+
             if self.collector_url and 'collector-id' in conf:
                 logging.debug("Envoi de la valeur vers le collecteur")
                 requests.post(self.collector_url, data={'sensor': conf['collector-id'], 'value': val})
