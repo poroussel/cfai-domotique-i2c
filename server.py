@@ -42,6 +42,7 @@ class Server(object):
             logging.info('Connexion BDD ok')
         else:
             logging.error('Erreur connexion ypareo')
+            self.ypareo = None
 
         self.commands = CONFIG.get('commands', {}).keys()
 
@@ -125,13 +126,14 @@ def console_server(server):
 
             # Sortie par timeout, on effectue les traitements récurrents
             if not readable:
+                occupation = False
                 # Détermination de l'occupation des locaux
-                try:
-                    planning = server.ypareo.interroPlanning()
-                    occupation = len(planning) > 0
-                except:
-                    logging.exception('Lecture planning')
-                    occupation = False
+                if server.ypareo:
+                    try:
+                        planning = server.ypareo.interroPlanning()
+                        occupation = len(planning) > 0
+                    except:
+                        logging.exception('Lecture planning')
 
                 # La valeur calculée peut être écrasée par une clé du fichier de configuration
                 if not CONFIG.get('force-occupation', None) is None:
