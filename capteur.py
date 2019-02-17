@@ -25,6 +25,7 @@ class CapteurI2C(Capteur):
 class CapteurModBUS(Capteur):
     def __init__(self, name, conf):
         Capteur.__init__(self, name, conf)
+        self.last_value = None
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             connection.connect((self.conf["tcp"], self.conf["port"]))
@@ -42,6 +43,7 @@ class CapteurModBUS(Capteur):
             P_BADGE = RCV[9]
             ID_BADGE = RCV[13]
 
-            if P_BADGE:
+            if P_BADGE and ID_BADGE != self.last_value:
+                self.last_value = ID_BADGE
                 return ID_BADGE
         return None
