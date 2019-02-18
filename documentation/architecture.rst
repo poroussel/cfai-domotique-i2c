@@ -32,7 +32,7 @@ La lecture de la valeur d'un capteur s'effectue donc en 2 temps :
 * envoi de la commande 8 identifiant le n° de pin dont on veut lire la valeur
 * envoi d'une requête de lecture qui retourne la valeur stockée par la commande 8
 
-  
+
 Communication entre les matériels
 =================================
 
@@ -76,3 +76,13 @@ est prévue dans la journée. Si le nombre de réservation de salle est supérie
 les locaux sont occupés.
 
 Cette base est stockée dans un serveur Postgresql sur la machine `srv-iris-sn`.
+
+
+Historisation des données remontées des capteurs
+================================================
+
+Le serveur peut être configuré de telle sorte que les données remontées des capteurs soient
+enregistrées dans une base de données d'historisation. Il est nécessaire pour cela de configurer
+l'accès à la base de données dans le fichier de configuration sous la clé `history-db`. Chaque
+capteur peut alors voir ses données rediriger vers la base de données en ajoutant à sa configuration
+une clé nommée `history` avec pour valeur `True`.

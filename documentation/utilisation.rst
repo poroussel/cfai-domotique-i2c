@@ -28,11 +28,18 @@ Base de données
   - `user` : utilisateur de connexion
   - `password` : mot de passe
   - `host` : nom ou adresse ip de la machine hôte
-- `port` : port de connexion
+  - `port` : port de connexion
+* `history-db` : accès à la base de données d'historisation des données
+
+  - `database` : nom de la base
+  - `user` : utilisateur de connexion
+  - `password` : mot de passe
+  - `host` : nom ou adresse ip de la machine hôte
+  - `port` : port de connexion
 
 
-Stockage des données lues
--------------------------
+Export des données lues vers une application web
+------------------------------------------------
 
 Il est possible de paramètrer le programme pour que les valeurs retournées par
 les capteurs soient enregistrées dans une base de données accessible depuis une
@@ -70,6 +77,10 @@ Chaque périphérique doit porter au minimum les informations suivantes :
 * `i2c-addr` : adresse du contrôleur arduino sur le bus i2c
 * `pin` : numéro du pin que lequel est connecté le périphérique
 
+Il est possible pour chaque capteur en lecture d'envoyer les données lues dans la base de
+données d'historisation, si celle-ci est définie dans la clé `history-db` (voir plus haut).
+Pour ce faire on ajoute la clé `history` avec comme valeur `True` aux informations du capteur.
+
 À chaque capteur peut être associé une liste de tâches à effectuer si une condition est vérifiée. La
 liste est définie sous la clé `execute`, chaque élément de la liste étant un dictionnaire comportant au
 minimum 3 clés :
@@ -103,6 +114,7 @@ lumière allumée, dès que le capteur `temp` retourne une valeur inférieure ou
       "temp": {
           "label": "Température cuisine",
 	  "action": "read",
+	  "history": True,
 	  "type": "float",
 	  "i2c-addr": 4,
 	  "pin": 0,
