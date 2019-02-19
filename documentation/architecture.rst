@@ -86,3 +86,7 @@ enregistrées dans une base de données d'historisation. Il est nécessaire pour
 l'accès à la base de données dans le fichier de configuration sous la clé `history-db`. Chaque
 capteur peut alors voir ses données rediriger vers la base de données en ajoutant à sa configuration
 une clé nommée `history` avec pour valeur `True`.
+
+Il est possible d'exporter les données historisées dans cette base en spécifiant le répertoire
+d'export dans la clé `history-export-dir` et en exécutant la commande `python history.py -e`.
+Seules les données du jour sont exportées dans un fichier nommé `values-AAAA-MM-JJ.csv`.

@@ -22,6 +22,7 @@ Base de données
 ---------------
 
 * `sqlite-path` : nom du fichier pour la base de données locale (inutilisé)
+
 * `ypareo-db` : accès au serveur de base de données Ypareo
 
   - `database` : nom de la base
@@ -29,6 +30,7 @@ Base de données
   - `password` : mot de passe
   - `host` : nom ou adresse ip de la machine hôte
   - `port` : port de connexion
+
 * `history-db` : accès à la base de données d'historisation des données
 
   - `database` : nom de la base
@@ -163,6 +165,7 @@ Autres
 * `loglevel` : niveau d'information dans le log (ERROR, INFO ou DEBUG)
 * `logfile` : nom du fichier log ou None pour utiliser la console
 * `force-occupation` : permet de définir si les locaux sont occupés ou pas quelque soit le contenu de la base de données (True, False ou None). Si la clé n'est pas présente ou que la valeur associée est `None` la valeur déterminée depuis la base de planning est utilisée.
+* `history-export-dir` : répertoire de stockage des fichiers générés à partir de la base history-db
 
 
 Exemples de commandes
