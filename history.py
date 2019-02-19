@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+import psycopg2
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -14,13 +14,10 @@ class History(object):
     """
     def __init__(self):
         self.m_connexion = None
-        self.m_cursor = None
 
     def connexion(self):
         try:
-            import psycopg2
             self.m_connexion = psycopg2.connect(**CONFIG['history-db'])
-            self.m_cursor = self.m_connexion.cursor()
         except:
             logging.exception('Connexion history-db')
             return False
@@ -31,10 +28,14 @@ class History(object):
             self.m_connexion.close()
 
     def write(self, name, value):
-        pass
-
+        with self.m_connexion:
+            with self.m_connexion.cursor() as cur:
+                cur.execute('INSERT INTO history (name, value) VALUES (%s, %s)', (name, value))
 
 if __name__ == '__main__':
     srv = History()
     if srv.connexion():
+        srv.write('capteur', 'valeur')
+        srv.write('capteur', 27)
+        srv.write('capteur', 37.2)
         srv.deconnexion()
