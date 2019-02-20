@@ -25,12 +25,13 @@ else:
 from creation_BDD import create_bdd
 from Ypareo import Ypareo
 from i2c import BusI2C
+from history import History
 
 class Server(object):
     def __init__(self):
         self.bus = BusI2C()
         self.ypareo = Ypareo()
-
+        self.history = History()
         self.collector_url = CONFIG.get('collector-url', None)
 
         if CONFIG.get('capture', False):
@@ -39,16 +40,23 @@ class Server(object):
             self.camera = None
 
         if self.ypareo.connexion():
-            logging.info('Connexion BDD ok')
+            logging.info('Connexion Ypareo ok')
         else:
             logging.error('Erreur connexion ypareo')
+            self.ypareo = None
+
+        if self.history.connexion():
+            logging.info('Connexion History ok')
+        else:
+            logging.error('Erreur connexion History')
+            self.history = None
 
         self.commands = CONFIG.get('commands', {}).keys()
 
         logging.info('Initialisation terminée...')
         # Liste des capteurs que l'on doit lire
         self.inputs = {name: conf['class'](name, conf) for name, conf in CONFIG['hardware'].iteritems() if conf['action'] == 'read'}
-        
+
     def hardware(self, name=None):
         if name:
             return CONFIG['hardware'][name]
@@ -57,13 +65,16 @@ class Server(object):
     def handle_input(self, occupation):
         for cpt, obj in self.inputs.iteritems():
             conf = CONFIG['hardware'][cpt]
-            
-            
+
+
             val = obj.read(self)
-            if val < 0:
+            if val is None:
                 continue
 
             logging.info('Lecture {} : {}'.format(cpt, val))
+
+            if self.history and conf.get('history', False):
+                self.history.write(cpt, str(val))
 
             if self.collector_url and 'collector-id' in conf:
                 logging.debug("Envoi de la valeur vers le collecteur")
@@ -125,13 +136,14 @@ def console_server(server):
 
             # Sortie par timeout, on effectue les traitements récurrents
             if not readable:
+                occupation = False
                 # Détermination de l'occupation des locaux
-                try:
-                    planning = server.ypareo.interroPlanning()
-                    occupation = len(planning) > 0
-                except:
-                    logging.exception('Lecture planning')
-                    occupation = False
+                if server.ypareo:
+                    try:
+                        planning = server.ypareo.interroPlanning()
+                        occupation = len(planning) > 0
+                    except:
+                        logging.exception('Lecture planning')
 
                 # La valeur calculée peut être écrasée par une clé du fichier de configuration
                 if not CONFIG.get('force-occupation', None) is None:
