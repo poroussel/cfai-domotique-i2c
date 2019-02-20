@@ -2,6 +2,7 @@
 
 import sys
 import csv
+import random
 import os.path
 import psycopg2
 import psycopg2.extras
@@ -31,10 +32,13 @@ class History(object):
         if self.m_connexion:
             self.m_connexion.close()
 
-    def write(self, name, value):
+    def write(self, name, value, tm=None):
         with self.m_connexion:
             with self.m_connexion.cursor() as cur:
-                cur.execute('INSERT INTO history (name, value) VALUES (%s, %s)', (name, value))
+                if tm is None:
+                    cur.execute('INSERT INTO history (name, value) VALUES (%s, %s)', (name, value))
+                else:
+                    cur.execute('INSERT INTO history (name, value, tmstamp) VALUES (%s, %s, %s)', (name, value, tm))
 
     def export(self, day):
         if 'history-export-dir' in CONFIG:
