@@ -21,6 +21,9 @@ class History(object):
         self.m_connexion = None
 
     def connexion(self):
+        if not 'history-db' in CONFIG:
+            logging.info('Aucune connexion history definie')
+            return False
         try:
             self.m_connexion = psycopg2.connect(**CONFIG['history-db'])
         except:

@@ -21,6 +21,9 @@ class Ypareo(object):
 
     def connexion(self):
         """Methode permettant de se connecter au serveur Ypareo, retourne True si etablie et False en cas d'erreur"""
+        if not 'ypareo-db' in CONFIG:
+            logging.info('Aucune connexion ypareo definie')
+            return False
         try:
             import psycopg2
             self.m_connexion = psycopg2.connect(**CONFIG['ypareo-db'])
