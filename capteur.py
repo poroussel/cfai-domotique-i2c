@@ -38,16 +38,16 @@ class CapteurModBUS(Capteur):
         except:
             self.connection = None
             logger.exception('Connection error')
-        
+
 
     def read(self, srv):
         if self.connection is None:
             return None
-        
+
         req = struct.pack('BBBBBBBBBBBB', 0, 0, 0, 0, 0, 6, self.conf['slave'], 0x03, 0x80, 0x00, 0x00, 0x10)
         self.connection.send(req)
         rec = self.connection.recv(self.BUFFER_SIZE)
-        
+
         tr_id = struct.unpack('>H', rec[0:2])[0]
         proto = struct.unpack('>H', rec[2:4])[0]
         length = struct.unpack('>H', rec[4:6])[0]
@@ -64,5 +64,52 @@ class CapteurModBUS(Capteur):
                 if identifiant != self.last_value:
                     self.last_value = identifiant
                     return identifiant
-        
+
+        return None
+
+
+enOceanCommunicator = None
+
+def enocean_thr():
+    global enOceanCommunicator
+    logger.info('EnOcean starting...')
+    enOceanCommunicator.run()
+    logger.info('EnOcean stopped')
+
+def create_communicator(conf):
+    global enOceanCommunicator
+
+    if not 'enocean-port' in conf:
+        logger.error('EnOcean port not defined')
+        enOceanCommunicator = 'error'
+        return
+
+    try:
+        import threading
+        from enocean.communicators.serialcommunicator import SerialCommunicator
+    except ImportError:
+        logger.error('EnOcean unavailable')
+        # FIXME : créer un Mock ?
+        enOceanCommunicator = 'error'
+        return
+
+    # FIXME : Use callback to react to new packets when they arrive
+    enOceanCommunicator = SerialCommunicator(callback=None, port=conf['enocean-port'])
+    threading.Thread(target=enocean_thr).start()
+    logger.info('EnOcean communicator started...')
+
+class CapteurEnOcean(Capteur):
+    def __init__(self, name, conf):
+        Capteur.__init__(self, name, conf)
+        global enOceanCommunicator
+        if enOceanCommunicator is None:
+            create_communicator(conf)
+
+    def read(self, srv):
+        global enOceanCommunicator
+        try:
+            packet = enOceanCommunicator.receive.get(block=False, timeout=0)
+            return packet.data[1]
+        except:
+            pass
         return None
