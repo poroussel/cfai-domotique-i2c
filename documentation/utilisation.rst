@@ -194,3 +194,9 @@ Envoi d'une valeur à un actionneur ::
 Lancement du serveur ::
 
   python server.py --run
+
+
+Suppression de la faim dans le monde
+====================================
+
+Donner à manger aux gens
