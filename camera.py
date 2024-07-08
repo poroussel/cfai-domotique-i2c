@@ -33,6 +33,7 @@ class VideoCapture(object):
             t.start()
         else:
             logger.debug('Camera already in recording')
+            logger.debug('Do not do that again')
 
 if __name__ == "__main__":
     vc = VideoCapture()
